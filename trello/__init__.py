@@ -160,7 +160,7 @@ class TrelloClient(object):
 		""" Fetch some JSON from Trello """
 
 		if http_method in ("POST", "PUT", "DELETE"):
-			headers['Content-type'] = 'application/json'
+			headers['Content-Type'] = 'application/json'
 
 		headers['Accept'] = 'application/json'
 		url = self.build_url(uri_path, query_params)
@@ -390,8 +390,8 @@ class List(object):
 		"""
 		json_obj = self.client.fetch_json(
 				'/lists/'+self.id+'/cards',
-				http_method = 'POST',
-				post_args = {'name': name, 'idList': self.id, 'desc': desc},)
+				http_method = 'POST',				
+		                post_args = {'name': name, 'desc': desc},)
 		card = Card(self, json_obj['id'])
 		card.name = json_obj['name']
 		card.description = json_obj.get('desc','')
@@ -400,6 +400,21 @@ class List(object):
 		card.member_ids = json_obj['idMembers']
 		return card
 		
+	def add_card_with_info(self, name, desc = None, label_color = None, idmember = None ):
+		json_obj = self.client.fetch_json(
+				'/lists/'+self.id+'/cards',
+				http_method = 'POST',
+		                post_args = {'name': name, 'desc': desc , 'labels' : label_color, 'idMembers':idmember }, )
+		card = Card(self, json_obj['id'])
+		card.name = json_obj['name']
+		card.description = json_obj.get('desc','')
+		card.closed = json_obj['closed']
+		card.url = json_obj['url']
+		card.member_ids = json_obj['idMembers']
+		self.labels = json_obj['labels']
+		return card		
+		
+	  
 	def fetch_actions(self, action_filter):
 		"""
 		Fetch actions for this list can give more argv to action_filter, 
@@ -439,6 +454,7 @@ class Card(object):
 		self.client = trello_list.client
 		self.id = card_id
 		self.name = name
+		
 
 	def __repr__(self):
 		return '<Card %s>' % self.name
