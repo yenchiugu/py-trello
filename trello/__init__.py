@@ -500,6 +500,11 @@ class Card(object):
 				query_params = {'filter': action_filter})
 		self.actions = json_obj
 
+	def fetch_members(self):
+		json_obj = self.client.fetch_json(
+				'/cards/'+self.id+'/members',)
+		return json_obj
+
 	@property
 	def create_date(self):
 		self.fetch_actions()
