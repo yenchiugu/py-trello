@@ -505,6 +505,11 @@ class Card(object):
 				'/cards/'+self.id+'/members',)
 		return json_obj
 
+	def fetch_labels(self):
+		json_obj = self.client.fetch_json(
+				'/cards/'+self.id+'/labels',)
+		return json_obj
+
 	@property
 	def create_date(self):
 		self.fetch_actions()
